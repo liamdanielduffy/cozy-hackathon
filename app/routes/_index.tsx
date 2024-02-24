@@ -1,5 +1,5 @@
-import { Home, Theme, allHomes, themes, useStore } from "../state";
-import { CodeCell } from "../components/Cell";
+import { Cell, CellType, Home, Theme, allHomes, themes, useStore } from "../state";
+import TextCell, { CodeCell } from "../components/Cell";
 import { useState } from "react";
 
 interface Props {
@@ -13,7 +13,7 @@ function Indicator(props: Props) {
 }
 
 export function House(props: Home & { children: React.ReactNode }) {
-  console.log(props.theme)
+  console.log(props.cells)
   return <div data-theme={props.theme} className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96 indicator">
     <Indicator isOnline />
     <div className="w-full flex flex-col justify-center items-center ">
@@ -44,18 +44,18 @@ function ColorPickerCell() {
 }
 
 
-function CellSelector(props: { addCell: (cell: string) => void }) {
-  const [selectedCell, setSelectedCell] = useState<string>("text");
+function CellSelector(props: { addCell: (cell: CellType) => void }) {
+  const [selectedCell, setSelectedCell] = useState<CellType>("text");
   return (
     <div className="join">
       <select
         className="select select-bordered w-full max-w-xs join-item"
         value={selectedCell}
-        onChange={(e) => setSelectedCell(e.target.value)}
+        onChange={(e) => setSelectedCell(e.target.value as CellType)}
       >
         <option value="text">Text</option>
-        <option value="colorPicker">Color Picker</option>
-        <option value="codeCell">Code Cell</option>
+        <option value="color">Color Picker</option>
+        <option value="code">Code Cell</option>
       </select>
       <button
         className="btn btn-primary join-item"
@@ -89,27 +89,27 @@ function ThemeSelector(props: { home: Home }) {
   );
 }
 
-function Text() {
-  return <textarea className="textarea bg-gray-100" placeholder="Write about whatever you want"></textarea>
+function CellComponent(props: { cell: Cell }) {
+  switch (props.cell.type) {
+    case 'code': return <CodeCell />
+    case 'color': return <ColorPickerCell />
+    case 'text': return <TextCell />
+    default: return <></>
+  }
 }
 
 export default function Index() {
 
   const store = useStore(state => state)
 
-  console.log(store)
-
   return (
     <div className="px-8 py-4" style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1 className="text-4xl font-bold my-4 font-mono">The Neighborhood</h1>
       <div className="flex w-full">
-        {allHomes(store).map((h, i) => (
+        {allHomes(store).map(h => (
           <>
             <House theme={h.theme} key={h.name} name={h.name} cells={h.cells} emoji={h.emoji}>
-              <ThemeSelector home={h} />
-              <Text />
-              <CodeCell />
-              <CellSelector addCell={console.log} />
+              {h.cells.map(c => <CellComponent key={c.id} cell={c} />)}
+              <CellSelector addCell={(cell) => store.addCell(cell, h.name)} />
             </House>
             <div className="mr-8" />
           </>

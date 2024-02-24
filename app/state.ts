@@ -1,6 +1,49 @@
 import { create } from 'zustand'
 
-export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, homeName: string) => void }>(set => ({
+function updateHome(state: GlobalState, homeName: string, newHomeProperties: Partial<Home>) {
+  if (state.myHome.name === homeName) {
+    return { ...state, myHome: { ...state.myHome, ...newHomeProperties } }
+  }
+  const newHomes = state.homes.map(h => h.name === homeName ? { ...h, ...newHomeProperties } : h)
+  return { ...state, homes: newHomes }
+}
+
+function getHome(state: GlobalState, homeName: string): Home {
+  if (state.myHome.name === homeName) return state.myHome
+  const [home] = state.homes.filter(h => h.name === homeName)
+  return home
+}
+
+function createCell(cell: CellType, num: number): Cell {
+  switch (cell) {
+    case 'text':
+      return {
+        id: num,
+        type: 'text',
+        value: ''
+      }
+    case 'code':
+      return {
+        id: num,
+        type: 'code',
+        value: ''
+      }
+    case 'color':
+      return {
+        id: num,
+        type: 'color',
+        value: ''
+      }
+    default:
+      return {
+        id: num,
+        type: 'text',
+        value: ''
+      }
+  }
+}
+
+export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, homeName: string) => void, addCell: (cellType: CellType, homeName: string) => void }>(set => ({
   myHome: {
     theme: 'light',
     name: 'andrew',
@@ -75,20 +118,28 @@ export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, home
       },
     ],
   }],
+  addCell: (cellType, homeName) => {
+    set((state: GlobalState) => {
+      const home = getHome(state, homeName)
+      const newCells = [...home.cells, createCell(cellType, home?.cells.length + 1)]
+      const newHome = updateHome(state, homeName, { cells: newCells })
+      return newHome
+    })
+  },
   setHomeTheme: (theme: Theme, homeName: string) => {
     set((state: GlobalState) => {
-      if (state.myHome.name === homeName) {
-        return { ...state, myHome: { ...state.myHome, theme } }
-      }
-      const newHomes = state.homes.map(h => h.name === homeName ? { ...h, theme } : h)
-      return { ...state, homes: newHomes }
+      const newHome = updateHome(state, homeName, { theme })
+      // console.log(newHome)
+      return newHome
     })
   }
 }))
 
-interface Cell {
+export type CellType = 'text' | 'code' | 'color'
+
+export interface Cell {
   id: number; // integer
-  type: 'text' | 'code';
+  type: CellType;
   value: string;
 }
 
