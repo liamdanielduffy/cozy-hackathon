@@ -3,10 +3,10 @@
 // and renders a div with that text valueimport {TextField, Label, Input} from 'react-aria-components';
 import { TextField, Label, Input } from 'react-aria-components';
 import { useEffect, useState } from "react";
-import { allHomes } from '../state';
+import { allHomes, globalState } from '../state';
 
 interface CellProps {
-  height: number;
+  value: string
 }
 
 interface CellContainer {
@@ -14,18 +14,18 @@ interface CellContainer {
 }
 
 export function CellContainer({ children }: CellContainer) {
-  return <TextField className="textarea flex flex-row items-center rounded-none mx-2 px-1 border-gray-300">{children}</TextField>;
+  return <TextField className="py-0 my-0 w-full input flex flex-row items-center rounded-none px-1 border-gray-300">{children}</TextField>;
 }
 
-export default function TextCell({ height }: CellProps) {
+export default function TextCell() {
   const [text, setText] = useState('');
 
   return (
     <CellContainer>
-      <TextField className="flex items-center flex-row">
+      <div className="flex items-center flex-row w-full">
         <Label>1</Label>
         <Input className="w-full h-full pl-2" value={text} onChange={(e) => setText(e.target.value)} />
-      </TextField>
+      </div>
     </CellContainer>
   )
 }
@@ -45,7 +45,7 @@ function getValFromRef(valRef: string) {
   const [valHome, valIndexStr] = valRef.split('.');
   const valHomeClean = valHome.replace('@', '');
   const valIndex = parseInt(valIndexStr);
-  const home = allHomes().find((home) => home.name === valHomeClean)
+  const home = allHomes(globalState).find((home) => home.name === valHomeClean)
   if (!home) throw new Error(`No home found for val ${valRef}`)
   const cell = home.cells.find((cell) => cell.id === valIndex);
   if (!cell) throw new Error(`No cell found for val ${valRef}`)
@@ -79,7 +79,7 @@ function recursiveEval(val: string) {
 }
 
 
-export function CodeCell({ height }: CellProps) {
+export function CodeCell() {
   const [val, setVal] = useState('');
   const [error, setError] = useState(false);
   const [evalResult, setEvalResult] = useState('');
@@ -97,12 +97,12 @@ export function CodeCell({ height }: CellProps) {
 
   return (
     <CellContainer>
-      <TextField className={`flex items-center flex-row ${error ? 'text-red-500' : ''}`}>
+      <div className={`w-full flex items-center flex-row ${error ? 'text-red-500' : ''}`}>
         <Label>1</Label>
-        <Input className="w-full h-full pl-2" value={val} onChange={(e) => setVal(e.target.value)} />
+        <Input className="pl-2 w-full h-full" value={val} onChange={(e) => setVal(e.target.value)} />
         {!error && <div>{evalResult}</div>}
         {error && <div>Error</div>}
-      </TextField>
+      </div>
     </CellContainer>
   )
 }
