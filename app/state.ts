@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 
-export const useStore = create<GlobalState>(() => ({
+export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, homeName: string) => void }>(set => ({
   myHome: {
+    theme: 'light',
     name: 'andrew',
     emoji: '🥳',
     cells: [
@@ -14,6 +15,7 @@ export const useStore = create<GlobalState>(() => ({
   },
   homes: [{
     name: 'liam',
+    theme: 'dark',
     emoji: '🎉',
     cells: [
       {
@@ -73,6 +75,15 @@ export const useStore = create<GlobalState>(() => ({
       },
     ],
   }],
+  setHomeTheme: (theme: Theme, homeName: string) => {
+    set((state: GlobalState) => {
+      if (state.myHome.name === homeName) {
+        return { ...state, myHome: { ...state.myHome, theme } }
+      }
+      const newHomes = state.homes.map(h => h.name === homeName ? { ...h, theme } : h)
+      return { ...state, homes: newHomes }
+    })
+  }
 }))
 
 interface Cell {
@@ -81,10 +92,13 @@ interface Cell {
   value: string;
 }
 
+export const themes = ['light', 'dark', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid', 'lemonade', 'night', 'coffee', 'winter', 'dim', 'nord', 'sunset'] as const;
+export type Theme = typeof themes[number];
 export interface Home {
   name: string;
   emoji: string;
   cells: Cell[];
+  theme: Theme
 }
 
 export interface GlobalState {

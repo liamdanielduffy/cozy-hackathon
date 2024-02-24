@@ -31,7 +31,6 @@ export default function TextCell() {
 }
 
 function getValRefs(val: string): string[] | null {
-  console.log("test")
   return val.match(/@[^ ]+/g);
 }
 
@@ -56,7 +55,6 @@ function recursiveEval(val: string, state: GlobalState) {
   // step 1 -- get all of the references (valRefs), which begin with an @ symbol, so get all the @1 or @liam.2 or etc.
   const valRefs = getValRefs(val) ?? []; // [@andrew.1, ...]
 
-  console.log(valRefs)
   // @andrew.1 -> 2 + 2
   // 2 + @andrew.1
 

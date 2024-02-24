@@ -1,4 +1,4 @@
-import { Home, allHomes, useStore } from "../state";
+import { Home, Theme, allHomes, themes, useStore } from "../state";
 import { CodeCell } from "../components/Cell";
 import { useState } from "react";
 
@@ -12,7 +12,8 @@ function Indicator(props: Props) {
   return <span className={`indicator-item badge ${bgColor} ring ${ringColor} ring-opacity-50 border-0 w-5 h-5`}></span>
 }
 
-export function House(props: Home & { children: React.ReactNode, theme?: string }) {
+export function House(props: Home & { children: React.ReactNode }) {
+  console.log(props.theme)
   return <div data-theme={props.theme} className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96 indicator">
     <Indicator isOnline />
     <div className="w-full flex flex-col justify-center items-center ">
@@ -66,6 +67,28 @@ function CellSelector(props: { addCell: (cell: string) => void }) {
   );
 }
 
+function ThemeSelector(props: { home: Home }) {
+  const setHomeTheme = useStore(state => state.setHomeTheme)
+  const [theme, setTheme] = useState<Theme>(props.home.theme)
+  return (
+    <div className="join">
+      <select
+        className="select select-bordered w-full max-w-xs join-item"
+        value={theme}
+        onChange={(e) => setTheme(e.target.value as Theme)}
+      >
+        {themes.map(t => <option key={t} value={t}>{t}</option>)}
+      </select>
+      <button
+        className="btn btn-primary join-item"
+        onClick={() => setHomeTheme(theme, props.home.name)}
+      >
+        Set Theme
+      </button>
+    </div>
+  );
+}
+
 function Text() {
   return <textarea className="textarea bg-gray-100" placeholder="Write about whatever you want"></textarea>
 }
@@ -74,13 +97,16 @@ export default function Index() {
 
   const store = useStore(state => state)
 
+  console.log(store)
+
   return (
     <div className="px-8 py-4" style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1 className="text-4xl font-bold my-4 font-mono">The Neighborhood</h1>
       <div className="flex w-full">
         {allHomes(store).map((h, i) => (
           <>
-            <House theme={i % 2 ? "cupcake" : ''} key={h.name} {...h}>
+            <House theme={h.theme} key={h.name} name={h.name} cells={h.cells} emoji={h.emoji}>
+              <ThemeSelector home={h} />
               <Text />
               <CodeCell />
               <CellSelector addCell={console.log} />
