@@ -38,14 +38,14 @@ export function House(props: Home & { children: React.ReactNode }) {
   console.log(props.status)
 
   return (
-    <div data-theme={props.theme} className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96">
+    <div data-theme={props.theme} className="shadow-2xl bg-primary p-2 flex flex-col w-96 min-w-96">
       <HouseSettings settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} />
       <div className="w-full flex flex-col justify-center items-center ">
         <div className="min-w-16 min-h-16 border rounded-full flex items-center justify-center border-gray-200 shadow-xl bg-white flex-shrink-0 text-3xl indicator">
           <Indicator status={props.status} />
           {props.emoji}
         </div>
-        <p className="text-gray-900 text-2xl mt-2">{props.name}</p>
+        <p className="text-base-100 text-2xl mt-2">{props.name}</p>
       </div>
       <div className="mb-4" />
 
@@ -93,7 +93,7 @@ function CellSelector(props: { addCell: (cell: CellType) => void }) {
         <option value="code">Code Cell</option>
       </select>
       <button
-        className="btn btn-primary join-item"
+        className="btn btn-secondary join-item"
         onClick={() => props.addCell(selectedCell)}
       >
         Add Cell
