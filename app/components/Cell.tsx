@@ -14,7 +14,7 @@ interface CellContainer {
 }
 
 export function CellContainer({ children }: CellContainer) {
-  return <TextField className="py-0 my-0 w-full input flex flex-row items-center rounded-none px-1 border-gray-300">{children}</TextField>;
+  return <TextField className="py-0 my-0 w-full input input-bordered flex flex-row items-center focus:outline-1 focus:outline-offset-0 rounded-none px-1 border-gray-300">{children}</TextField>;
 }
 
 export default function TextCell() {
@@ -22,8 +22,8 @@ export default function TextCell() {
 
   return (
     <CellContainer>
-      <div className="flex items-center flex-row w-full">
-        <Input className="w-full h-full pl-2" value={text} onChange={(e) => setText(e.target.value)} />
+      <div className="focus:outline-1 focus:outline-offset-0 flex items-center flex-row w-full">
+        <Input className="focus:outline-1 focus:outline-offset-0 w-full h-full pl-2" value={text} onChange={(e) => setText(e.target.value)} />
       </div>
     </CellContainer>
   )
@@ -47,6 +47,7 @@ function getValFromRef(valRef: string, state: GlobalState) {
   if (!home) throw new Error(`No home found for val ${valRef}`)
   const cell = home.cells.find((cell) => cell.id === valIndex);
   if (!cell) throw new Error(`No cell found for val ${valRef}`)
+  console.log(home, cell)
   return cell.value;
 }
 
@@ -54,6 +55,7 @@ function recursiveEval(val: string, state: GlobalState) {
   // step 1 -- get all of the references (valRefs), which begin with an @ symbol, so get all the @1 or @liam.2 or etc.
   const valRefs = getValRefs(val) ?? []; // [@andrew.1, ...]
 
+  console.log(valRefs)
   // @andrew.1 -> 2 + 2
   // 2 + @andrew.1
 
@@ -62,10 +64,12 @@ function recursiveEval(val: string, state: GlobalState) {
     validateValRef(valRef)
     // step 3 -- fetch those reference's code from global store
     const valText = getValFromRef(valRef, state); // 2 + 2
-
+    console.log(valText)
     const result = recursiveEval(valText, state);
+    console.log(result)
     // step 4 -- replace the valRef with the result of the recursiveEval
     val = val.replace(valRef, String(result));
+    console.log(val)
   });
 
   return eval(val); // at the end, eval the val.
@@ -96,7 +100,7 @@ export function CodeCell(props: { cell: Cell }) {
     <CellContainer>
       <div className={`w-full flex items-center flex-row ${error ? 'text-red-500' : ''}`}>
         <Label>{props.cell.id}</Label>
-        <Input className="pl-2 w-full h-full" value={val} onChange={(e) => setVal(e.target.value)} />
+        <Input className="focus:outline-1 focus:outline-offset-0 pl-2 w-full h-full" value={val} onChange={(e) => setVal(e.target.value)} />
         {!error && <div>{evalResult}</div>}
         {error && <div>Error</div>}
       </div>

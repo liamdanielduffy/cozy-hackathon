@@ -32,10 +32,7 @@ function HouseSettings({ settingsOpen, setSettingsOpen }: { settingsOpen: boolea
 }
 
 export function House(props: Home & { children: React.ReactNode }) {
-  console.log(props.theme)
   const [settingsOpen, setSettingsOpen] = useState(false)
-  console.log(settingsOpen)
-  console.log(props.status)
 
   return (
     <div data-theme={props.theme} className="shadow-2xl bg-primary p-2 flex flex-col w-96 min-w-96">
@@ -84,7 +81,7 @@ function CellSelector(props: { addCell: (cell: CellType) => void }) {
   return (
     <div className="join">
       <select
-        className="select select-bordered w-full max-w-xs join-item"
+        className="select select-bordered focus:outline-1 focus:outline-offset-0 w-full max-w-xs join-item"
         value={selectedCell}
         onChange={(e) => setSelectedCell(e.target.value as CellType)}
       >
@@ -134,6 +131,7 @@ export default function Index() {
           <>
             <House status={h.status} theme={h.theme} key={h.name} name={h.name} cells={h.cells} emoji={h.emoji}>
               {h.cells.map(c => <CellComponent key={c.id} cell={c} />)}
+              <div className="mb-4" />
               <CellSelector addCell={(cell) => store.addCell(cell, h.name)} />
             </House>
             <div className="mr-8" />
