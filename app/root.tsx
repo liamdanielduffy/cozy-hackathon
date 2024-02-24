@@ -24,6 +24,7 @@ export default function App() {
         <Links />
       </head>
       <body>
+        <div className="text-5xl text-red-500">Hello</div>
         <Outlet />
         <ScrollRestoration />
         <Scripts />
