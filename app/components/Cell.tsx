@@ -26,6 +26,16 @@ export function DrawingCell() {
   )
 }
 
+export function ValCell() {
+  return (
+    <iframe
+      title="valcell"
+      src="https://www.val.town/embed/new"
+      style={{ width: '100%', height: '150px' }}
+    />
+  )
+}
+
 export default function TextCell() {
   const [text, setText] = useState('');
 
