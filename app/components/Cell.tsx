@@ -8,14 +8,24 @@ interface CellProps {
   height: number;
 }
 
-export default function Cell({ height }: CellProps) {
+interface CellContainer {
+  children: React.ReactNode;
+}
+
+export function CellContainer({ children }: CellContainer) {
+  return <TextField className="input flex flex-row items-center rounded-none mx-2 px-1 border-gray-300">{children}</TextField>;
+}
+
+export default function TextCell({ height }: CellProps) {
   const [text, setText] = useState('');
 
   return (
-    <TextField className="input rounded-none flex flex-row items-center mx-2 px-1 border-gray-300">
-      <Label>1</Label>
-      <Input className="w-full h-full pl-2" value={text} onChange={(e) => setText(e.target.value)} />
-    </TextField>
+    <CellContainer>
+      <TextField className="flex items-center flex-row">
+        <Label>1</Label>
+        <Input className="w-full h-full pl-2" value={text} onChange={(e) => setText(e.target.value)} />
+      </TextField>
+    </CellContainer>
   )
 }
 
