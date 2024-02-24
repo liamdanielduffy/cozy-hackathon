@@ -3,6 +3,7 @@
 // and renders a div with that text valueimport {TextField, Label, Input} from 'react-aria-components';
 import { TextField, Label, Input } from 'react-aria-components';
 import { useEffect, useState } from "react";
+import { allHomes, globalState } from '../state';
 
 interface CellProps {
   height: number;
@@ -29,6 +30,46 @@ export default function TextCell({ height }: CellProps) {
   )
 }
 
+function getValRefs(val: string): string[] | null {
+  return val.match(/@[^ ]+/g);
+}
+
+function validateValRef(valRef: string) {
+  if (!valRef.match(/@(\w+)\.(\d+)/g)) {
+    throw new Error("Invalid valRef format. Expected format is @<string>.<int>");
+  }
+}
+
+function getValFromRef(valRef: string) {
+  const [valHome, valIndexStr] = valRef.split('.');
+  const valHomeClean = valHome.replace('@', '');
+  const valIndex = parseInt(valIndexStr);
+  const home = allHomes().find((home) => home.name === valHomeClean)
+  if (!home) throw new Error(`No home found for val ${valRef}`)
+  return home.cells.find((cell) => cell.id === valIndex);
+}
+
+function recursiveEval(valHome: string, val: string) {
+  // step 1 -- get all of the references (valRefs), which begin with an @ symbol, so get all the @1 or @liam.2 or etc.
+  const valRefs = getValRefs(val) ?? []; // [@andrew.1, ...]
+
+  valRefs.forEach((valRef) => {
+    // step 2 -- validate that each valRef is @<string>.<int> using regex. If not, error!
+    validateValRef(valRef)
+  });
+
+  // step 3 -- fetch those reference's code from global store
+  valRefs.forEach((valRef) => {
+    const [valHome, valIndex] = valRef.split('.');
+    const valHomeClean = valHome.replace('@', '');
+    const valIndexClean = parseInt(valIndex);
+  });
+
+  // step 4 -- replace all of the references with the actual values by evaling them (this happens recursively)
+  // step 5 -- eval this val
+  // step 6 -- return the result of that eval
+}
+
 
 export function CodeCell({ height }: CellProps) {
   const [val, setVal] = useState('');
@@ -36,12 +77,6 @@ export function CodeCell({ height }: CellProps) {
   const [evalResult, setEvalResult] = useState('');
 
   useEffect(() => {
-
-    // step 1 -- get all of the references (sub-vals), which begin with an @ symbol, so get all the @1 or @liam.2 or etc.
-    // step 2 -- fetch those reference's code from global store
-    // step 3 -- replace all of the references with the actual values by evaling them (this happens recursively)
-    // step 4 -- eval this val
-    // step 5 -- return the result of that eval
 
     try {
       const result = eval(val);

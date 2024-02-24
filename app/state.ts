@@ -16,18 +16,32 @@ interface GlobalState {
   homes: Home[];
 }
 
-const globalState: GlobalState = {
+export function allHomes() {
+  return [globalState.myHome, ...globalState.homes];
+}
+
+export const globalState: GlobalState = {
   myHome: {
-    name: 'Home',
+    name: 'andrew',
     emoji: '🏠',
     cells: [
       {
         id: 1,
-        type: 'text',
-        value: 'Hello, world!',
+        type: 'code',
+        value: '2+2',
       },
     ],
   },
-  homes: [],
+  homes: [{
+    name: 'liam',
+    emoji: '🏠',
+    cells: [
+      {
+        id: 1,
+        type: 'code',
+        value: '@andrew.1 + 2',
+      },
+    ],
+  }],
 };
 
