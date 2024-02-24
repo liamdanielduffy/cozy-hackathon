@@ -49,39 +49,21 @@ export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, home
     name: 'joce',
     emoji: '🥳',
     status: 'online',
-    cells: [
-      {
-        id: 1,
-        type: 'code',
-        value: '2+2',
-      },
-    ],
+    cells: [],
   },
   homes: [{
     name: 'liam',
     theme: 'synthwave',
     emoji: '🎉',
     status: 'dnd',
-    cells: [
-      {
-        id: 1,
-        type: 'code',
-        value: '@andrew.1 + 2',
-      },
-    ],
+    cells: [],
   },
   {
     name: 'priya',
     theme: 'default',
     emoji: '🥰',
     status: 'offline',
-    cells: [
-      {
-        id: 1,
-        type: 'code',
-        value: '@andrew.1 + 2',
-      },
-    ],
+    cells: [],
   }],
   addCell: (cellType, homeName) => {
     set((state: GlobalState) => {

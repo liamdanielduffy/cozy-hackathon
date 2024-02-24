@@ -3,7 +3,7 @@
 // and renders a div with that text valueimport {TextField, Label, Input} from 'react-aria-components';
 import { TextField, Label, Input } from 'react-aria-components';
 import { useEffect, useState } from "react";
-import { GlobalState, allHomes, useStore } from '../state';
+import { Cell, CellType, GlobalState, allHomes, useStore } from '../state';
 
 interface CellProps {
   value: string
@@ -23,7 +23,6 @@ export default function TextCell() {
   return (
     <CellContainer>
       <div className="flex items-center flex-row w-full">
-        <Label>1</Label>
         <Input className="w-full h-full pl-2" value={text} onChange={(e) => setText(e.target.value)} />
       </div>
     </CellContainer>
@@ -77,7 +76,7 @@ function recursiveEval(val: string, state: GlobalState) {
 }
 
 
-export function CodeCell() {
+export function CodeCell(props: { cell: Cell }) {
   const [val, setVal] = useState('');
   const [error, setError] = useState(false);
   const [evalResult, setEvalResult] = useState('');
@@ -96,7 +95,7 @@ export function CodeCell() {
   return (
     <CellContainer>
       <div className={`w-full flex items-center flex-row ${error ? 'text-red-500' : ''}`}>
-        <Label>1</Label>
+        <Label>{props.cell.id}</Label>
         <Input className="pl-2 w-full h-full" value={val} onChange={(e) => setVal(e.target.value)} />
         {!error && <div>{evalResult}</div>}
         {error && <div>Error</div>}

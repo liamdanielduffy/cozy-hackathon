@@ -116,7 +116,7 @@ function ThemeSelector(props: { home: Home }) {
 
 function CellComponent(props: { cell: Cell }) {
   switch (props.cell.type) {
-    case 'code': return <CodeCell />
+    case 'code': return <CodeCell cell={props.cell} />
     case 'color': return <ColorPickerCell />
     case 'text': return <TextCell />
     default: return <></>
