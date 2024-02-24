@@ -1,7 +1,7 @@
 import type { MetaFunction } from "@remix-run/node";
 
 import { House } from "~/app/components/House";
-import TextCell from "../components/Cell";
+import TextCell, { CodeCell } from "../components/Cell";
 
 export const meta: MetaFunction = () => {
   return [
@@ -16,6 +16,7 @@ export default function Index() {
       <h1 className="text-4xl font-bold">Welcome to The Neighborhood</h1>
       <p className="text-lg">This is a simple app to help you find your next home.</p>
       <TextCell height={60} />
+      <CodeCell height={60} />
       <House />
     </div>
   );
