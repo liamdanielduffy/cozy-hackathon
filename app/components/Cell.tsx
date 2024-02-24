@@ -41,11 +41,11 @@ function validateValRef(valRef: string) {
   }
 }
 
-function getValFromRef(valRef: string) {
+function getValFromRef(valRef: string, state: GlobalState) {
   const [valHome, valIndexStr] = valRef.split('.');
   const valHomeClean = valHome.replace('@', '');
   const valIndex = parseInt(valIndexStr);
-  const home = allHomes(globalState).find((home) => home.name === valHomeClean)
+  const home = allHomes(state).find((home) => home.name === valHomeClean)
   if (!home) throw new Error(`No home found for val ${valRef}`)
   const cell = home.cells.find((cell) => cell.id === valIndex);
   if (!cell) throw new Error(`No cell found for val ${valRef}`)
@@ -64,7 +64,7 @@ function recursiveEval(val: string, state: GlobalState) {
     // step 2 -- validate that each valRef is @<string>.<int> using regex. If not, error!
     validateValRef(valRef)
     // step 3 -- fetch those reference's code from global store
-    const valText = getValFromRef(valRef); // 2 + 2
+    const valText = getValFromRef(valRef, state); // 2 + 2
 
     const result = recursiveEval(valText, state);
     // step 4 -- replace the valRef with the result of the recursiveEval
