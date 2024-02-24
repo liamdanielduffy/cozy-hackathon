@@ -8,6 +8,12 @@ function updateHome(state: GlobalState, homeName: string, newHomeProperties: Par
   return { ...state, homes: newHomes }
 }
 
+function updateCellInHome(state: GlobalState, homeName: string, cellId: number, newCellProperties: Partial<Cell>) {
+  const home = getHome(state, homeName)
+  const newCells = home.cells.map(c => c.id === cellId ? { ...c, ...newCellProperties } : c)
+  return updateHome(state, homeName, { cells: newCells })
+}
+
 function getHome(state: GlobalState, homeName: string): Home {
   if (state.myHome.name === homeName) return state.myHome
   const [home] = state.homes.filter(h => h.name === homeName)
@@ -43,7 +49,7 @@ function createCell(cell: CellType, num: number): Cell {
   }
 }
 
-export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, homeName: string) => void, addCell: (cellType: CellType, homeName: string) => void }>(set => ({
+export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, homeName: string) => void, addCell: (cellType: CellType, homeName: string) => void, setCellProperties: (homeName: string, cellId: number, newCellProperties: Partial<Cell>) => void }>(set => ({
   myHome: {
     theme: 'bumblebee',
     name: 'joce',
@@ -78,6 +84,11 @@ export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, home
       const newHome = updateHome(state, homeName, { theme })
       // console.log(newHome)
       return newHome
+    })
+  },
+  setCellProperties: (homeName: string, cellId: number, newCellProperties: Partial<Cell>) => {
+    set((state: GlobalState) => {
+      return updateCellInHome(state, homeName, cellId, newCellProperties)
     })
   }
 }))

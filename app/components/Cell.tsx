@@ -3,7 +3,7 @@
 // and renders a div with that text valueimport {TextField, Label, Input} from 'react-aria-components';
 import { TextField, Label, Input } from 'react-aria-components';
 import { useEffect, useState } from "react";
-import { Cell, CellType, GlobalState, allHomes, useStore } from '../state';
+import { Cell, CellType, GlobalState, Home, allHomes, useStore } from '../state';
 
 interface CellProps {
   value: string
@@ -80,27 +80,33 @@ function recursiveEval(val: string, state: GlobalState) {
 }
 
 
-export function CodeCell(props: { cell: Cell }) {
-  const [val, setVal] = useState('');
+export function CodeCell(props: { cell: Cell, home: Home }) {
+
+  const setCellProperties = useStore(store => store.setCellProperties)
+
+  const updateCellValue = (value: string) => {
+    setCellProperties(props.home.name, props.cell.id, { value })
+  }
+
   const [error, setError] = useState(false);
   const [evalResult, setEvalResult] = useState('');
   const store = useStore()
 
   useEffect(() => {
     try {
-      const result = recursiveEval(val, store);
+      const result = recursiveEval(props.cell.value, store);
       setEvalResult(String(result));
       setError(false);
     } catch {
       setError(true);
     }
-  }, [val, store]);
+  }, [props.cell.value, store]);
 
   return (
     <CellContainer>
       <div className={`w-full flex items-center flex-row ${error ? 'text-red-500' : ''}`}>
-        <Label>{props.cell.id}</Label>
-        <Input className="focus:outline-1 focus:outline-offset-0 pl-2 w-full h-full" value={val} onChange={(e) => setVal(e.target.value)} />
+        <Label className="bg-secondary text-base-100 px-2 rounded-full">{props.cell.id}</Label>
+        <Input className="focus:outline-1 focus:outline-offset-0 pl-2 w-full h-full" value={props.cell.value} onChange={(e) => updateCellValue(e.target.value)} />
         {!error && <div>{evalResult}</div>}
         {error && <div>Error</div>}
       </div>

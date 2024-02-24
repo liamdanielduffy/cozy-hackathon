@@ -111,9 +111,9 @@ function ThemeSelector(props: { home: Home }) {
   );
 }
 
-function CellComponent(props: { cell: Cell }) {
+function CellComponent(props: { cell: Cell, home: Home }) {
   switch (props.cell.type) {
-    case 'code': return <CodeCell cell={props.cell} />
+    case 'code': return <CodeCell cell={props.cell} home={props.home} />
     case 'color': return <ColorPickerCell />
     case 'text': return <TextCell />
     default: return <></>
@@ -130,7 +130,7 @@ export default function Index() {
         {allHomes(store).map(h => (
           <>
             <House status={h.status} theme={h.theme} key={h.name} name={h.name} cells={h.cells} emoji={h.emoji}>
-              {h.cells.map(c => <CellComponent key={c.id} cell={c} />)}
+              {h.cells.map(c => <CellComponent key={c.id} cell={c} home={h} />)}
               <div className="mb-4" />
               <CellSelector addCell={(cell) => store.addCell(cell, h.name)} />
             </House>
