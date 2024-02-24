@@ -1,15 +1,9 @@
-import { Home, allHomes, globalState } from "../state";
-import { LoaderFunction, json } from "@remix-run/node";
-import { useLoaderData } from '@remix-run/react'
+import { Home, allHomes, useStore } from "../state";
 import { CodeCell } from "../components/Cell";
 import { useState } from "react";
 
 interface Props {
   isOnline?: boolean
-}
-
-export const loader: LoaderFunction = async () => {
-  return json(globalState);
 }
 
 function Indicator(props: Props) {
@@ -18,8 +12,8 @@ function Indicator(props: Props) {
   return <span className={`indicator-item badge ${bgColor} ring ${ringColor} ring-opacity-50 border-0 w-5 h-5`}></span>
 }
 
-export function House(props: Home & { children: React.ReactNode }) {
-  return <div className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96 indicator">
+export function House(props: Home & { children: React.ReactNode, theme?: string }) {
+  return <div data-theme={props.theme} className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96 indicator">
     <Indicator isOnline />
     <div className="w-full flex flex-col justify-center items-center ">
       <div className="min-w-16 min-h-16 border rounded-full flex items-center justify-center border-gray-200 shadow-xl bg-white flex-shrink-0 text-3xl">{props.emoji}</div>
@@ -51,11 +45,10 @@ function ColorPickerCell() {
 
 function CellSelector(props: { addCell: (cell: string) => void }) {
   const [selectedCell, setSelectedCell] = useState<string>("text");
-
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="join">
       <select
-        className="select select-bordered w-full max-w-xs"
+        className="select select-bordered w-full max-w-xs join-item"
         value={selectedCell}
         onChange={(e) => setSelectedCell(e.target.value)}
       >
@@ -64,7 +57,7 @@ function CellSelector(props: { addCell: (cell: string) => void }) {
         <option value="codeCell">Code Cell</option>
       </select>
       <button
-        className="btn btn-primary mt-4"
+        className="btn btn-primary join-item"
         onClick={() => props.addCell(selectedCell)}
       >
         Add Cell
@@ -79,18 +72,18 @@ function Text() {
 
 export default function Index() {
 
-  const globalState = useLoaderData<typeof loader>()
+  const store = useStore(state => state)
 
   return (
     <div className="px-8 py-4" style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1 className="text-4xl font-bold my-4 font-mono">The Neighborhood</h1>
       <div className="flex w-full">
-        {allHomes(globalState).map(h => (
+        {allHomes(store).map((h, i) => (
           <>
-            <House key={h.name} {...h}>
+            <House theme={i % 2 ? "cupcake" : ''} key={h.name} {...h}>
               <Text />
               <CodeCell />
-              <button className="btn">Add a block</button>
+              <CellSelector addCell={console.log} />
             </House>
             <div className="mr-8" />
           </>

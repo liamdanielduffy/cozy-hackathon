@@ -3,7 +3,7 @@
 // and renders a div with that text valueimport {TextField, Label, Input} from 'react-aria-components';
 import { TextField, Label, Input } from 'react-aria-components';
 import { useEffect, useState } from "react";
-import { allHomes, globalState } from '../state';
+import { GlobalState, allHomes, useStore } from '../state';
 
 interface CellProps {
   value: string
@@ -52,7 +52,7 @@ function getValFromRef(valRef: string) {
   return cell.value;
 }
 
-function recursiveEval(val: string) {
+function recursiveEval(val: string, state: GlobalState) {
   // step 1 -- get all of the references (valRefs), which begin with an @ symbol, so get all the @1 or @liam.2 or etc.
   const valRefs = getValRefs(val) ?? []; // [@andrew.1, ...]
 
@@ -66,7 +66,7 @@ function recursiveEval(val: string) {
     // step 3 -- fetch those reference's code from global store
     const valText = getValFromRef(valRef); // 2 + 2
 
-    const result = recursiveEval(valText);
+    const result = recursiveEval(valText, state);
     // step 4 -- replace the valRef with the result of the recursiveEval
     val = val.replace(valRef, String(result));
   });
@@ -83,17 +83,17 @@ export function CodeCell() {
   const [val, setVal] = useState('');
   const [error, setError] = useState(false);
   const [evalResult, setEvalResult] = useState('');
+  const store = useStore()
 
   useEffect(() => {
-
     try {
-      const result = recursiveEval(val);
+      const result = recursiveEval(val, store);
       setEvalResult(String(result));
       setError(false);
     } catch {
       setError(true);
     }
-  }, [val]);
+  }, [val, store]);
 
   return (
     <CellContainer>

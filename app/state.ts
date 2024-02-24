@@ -1,26 +1,6 @@
+import { create } from 'zustand'
 
-interface Cell {
-  id: number; // integer
-  type: 'text' | 'code';
-  value: string;
-}
-
-export interface Home {
-  name: string;
-  emoji: string;
-  cells: Cell[];
-}
-
-interface GlobalState {
-  myHome: Home;
-  homes: Home[];
-}
-
-export function allHomes(globalState: GlobalState) {
-  return [globalState.myHome, ...globalState.homes];
-}
-
-export const globalState: GlobalState = {
+export const useStore = create<GlobalState>(() => ({
   myHome: {
     name: 'andrew',
     emoji: '🥳',
@@ -93,5 +73,25 @@ export const globalState: GlobalState = {
       },
     ],
   }],
-};
+}))
 
+interface Cell {
+  id: number; // integer
+  type: 'text' | 'code';
+  value: string;
+}
+
+export interface Home {
+  name: string;
+  emoji: string;
+  cells: Cell[];
+}
+
+export interface GlobalState {
+  myHome: Home;
+  homes: Home[];
+}
+
+export function allHomes(globalState: GlobalState) {
+  return [globalState.myHome, ...globalState.homes];
+}
