@@ -1,5 +1,5 @@
-import { Cell, CellType, Home, Status, Theme, allHomes, themes, useStore } from "../state";
-import TextCell, { CodeCell } from "../components/Cell";
+import { Cell, CellType, Home, Status, allHomes, themes, useStore } from "../state";
+import TextCell, { CodeCell, DrawingCell } from "../components/Cell";
 import { useState } from "react";
 
 interface IndicatorProps {
@@ -88,6 +88,7 @@ function CellSelector(props: { addCell: (cell: CellType) => void }) {
         <option value="text">Text</option>
         <option value="color">Color Picker</option>
         <option value="code">Code Cell</option>
+        <option value="draw">Drawing Cell</option>
       </select>
       <button
         className="btn btn-secondary join-item"
@@ -101,7 +102,6 @@ function CellSelector(props: { addCell: (cell: CellType) => void }) {
 
 function ThemeSelector(props: { home: Home }) {
   const setHomeTheme = useStore(state => state.setHomeTheme)
-  const [theme, setTheme] = useState<Theme>(props.home.theme)
   return (
     <>
       <div className="join join-vertical">
@@ -116,6 +116,7 @@ function CellComponent(props: { cell: Cell, home: Home }) {
     case 'code': return <CodeCell cell={props.cell} home={props.home} />
     case 'color': return <ColorPickerCell />
     case 'text': return <TextCell />
+    case 'draw': return <DrawingCell />
     default: return <></>
   }
 }

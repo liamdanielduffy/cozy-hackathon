@@ -3,11 +3,9 @@
 // and renders a div with that text valueimport {TextField, Label, Input} from 'react-aria-components';
 import { TextField, Label, Input } from 'react-aria-components';
 import { useEffect, useState } from "react";
-import { Cell, CellType, GlobalState, Home, allHomes, useStore } from '../state';
+import { Cell, GlobalState, Home, allHomes, useStore } from '../state';
+import { ReactSketchCanvas } from "react-sketch-canvas";
 
-interface CellProps {
-  value: string
-}
 
 interface CellContainer {
   children: React.ReactNode;
@@ -15,6 +13,17 @@ interface CellContainer {
 
 export function CellContainer({ children }: CellContainer) {
   return <TextField className="py-0 my-0 w-full input input-bordered flex flex-row items-center focus:outline-1 focus:outline-offset-0 rounded-none px-1 border-gray-300">{children}</TextField>;
+}
+
+export function DrawingCell() {
+  return (
+    <ReactSketchCanvas
+      width="100%"
+      height="150px"
+      canvasColor="white"
+      strokeColor="blue"
+    />
+  )
 }
 
 export default function TextCell() {

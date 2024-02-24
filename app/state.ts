@@ -40,6 +40,12 @@ function createCell(cell: CellType, num: number): Cell {
         type: 'color',
         value: ''
       }
+    case 'draw':
+      return {
+        id: num,
+        type: 'draw',
+        value: ''
+      }
     default:
       return {
         id: num,
@@ -93,7 +99,7 @@ export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, home
   }
 }))
 
-export type CellType = 'text' | 'code' | 'color'
+export type CellType = 'text' | 'code' | 'color' | 'draw'
 
 export interface Cell {
   id: number; // integer
