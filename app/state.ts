@@ -45,9 +45,10 @@ function createCell(cell: CellType, num: number): Cell {
 
 export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, homeName: string) => void, addCell: (cellType: CellType, homeName: string) => void }>(set => ({
   myHome: {
-    theme: 'light',
-    name: 'andrew',
+    theme: 'bumblebee',
+    name: 'joce',
     emoji: '🥳',
+    status: 'online',
     cells: [
       {
         id: 1,
@@ -58,63 +59,27 @@ export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, home
   },
   homes: [{
     name: 'liam',
-    theme: 'dark',
+    theme: 'synthwave',
     emoji: '🎉',
+    status: 'dnd',
     cells: [
       {
         id: 1,
         type: 'code',
         value: '@andrew.1 + 2',
       },
+    ],
+  },
+  {
+    name: 'priya',
+    theme: 'default',
+    emoji: '🥰',
+    status: 'offline',
+    cells: [
       {
-        id: 2,
+        id: 1,
         type: 'code',
-        value: '@andrew.2 + 3',
-      },
-      {
-        id: 3,
-        type: 'code',
-        value: '@andrew.3 + 4',
-      },
-      {
-        id: 4,
-        type: 'code',
-        value: '@andrew.4 + 5',
-      },
-      {
-        id: 5,
-        type: 'code',
-        value: '@andrew.5 + 6',
-      },
-      {
-        id: 6,
-        type: 'code',
-        value: '@andrew.6 + 7',
-      },
-      {
-        id: 7,
-        type: 'code',
-        value: '@andrew.7 + 8',
-      },
-      {
-        id: 8,
-        type: 'code',
-        value: '@andrew.8 + 9',
-      },
-      {
-        id: 9,
-        type: 'code',
-        value: '@andrew.9 + 10',
-      },
-      {
-        id: 10,
-        type: 'code',
-        value: '@andrew.10 + 11',
-      },
-      {
-        id: 11,
-        type: 'code',
-        value: '@andrew.11 + 12',
+        value: '@andrew.1 + 2',
       },
     ],
   }],
@@ -143,11 +108,13 @@ export interface Cell {
   value: string;
 }
 
-export const themes = ['light', 'dark', 'cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid', 'lemonade', 'night', 'coffee', 'winter', 'dim', 'nord', 'sunset'] as const;
+export const themes = ['default', 'retro', 'cupcake', 'cyberpunk', 'valentine', 'bumblebee', 'synthwave', 'nord'] as const;
 export type Theme = typeof themes[number];
+export type Status = 'online' | 'offline' | 'dnd';
 export interface Home {
   name: string;
   emoji: string;
+  status: Status;
   cells: Cell[];
   theme: Theme
 }

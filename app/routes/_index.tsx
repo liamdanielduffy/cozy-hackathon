@@ -1,30 +1,65 @@
-import { Cell, CellType, Home, Theme, allHomes, themes, useStore } from "../state";
+import { Cell, CellType, Home, Status, Theme, allHomes, themes, useStore } from "../state";
 import TextCell, { CodeCell } from "../components/Cell";
 import { useState } from "react";
 
-interface Props {
-  isOnline?: boolean
+interface IndicatorProps {
+  status: Status
 }
 
-function Indicator(props: Props) {
-  const bgColor = props.isOnline ? 'bg-green-200' : 'bg-gray-400'
-  const ringColor = props.isOnline ? 'ring-green-400' : 'ring-gray-400'
-  return <span className={`indicator-item badge ${bgColor} ring ${ringColor} ring-opacity-50 border-0 w-5 h-5`}></span>
+function Indicator(props: IndicatorProps) {
+  const statusStyles = {
+    online: 'bg-green-200 ring-green-400 ',
+    dnd: 'bg-red-200 ring-red-400',
+    offline: 'bg-gray-400 ring-gray-400',
+  }
+  return <span className={`indicator-item badge ring ${statusStyles[props.status]} ring-opacity-50 border-0 w-5 h-5`}></span>
+}
+
+function HouseSettings({ settingsOpen, setSettingsOpen }: { settingsOpen: boolean, setSettingsOpen: (open: boolean) => void }) {
+  return (
+    <label className="self-end swap swap-rotate">
+      {/* this hidden checkbox controls the state */}
+      <input type="checkbox" checked={settingsOpen} onChange={() => setSettingsOpen(!settingsOpen)} />
+      {/* sun icon */}
+      <svg className="swap-off fill-current w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+      </svg>
+      <svg className="swap-on fill-current w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    </label>
+  )
 }
 
 export function House(props: Home & { children: React.ReactNode }) {
-  console.log(props.cells)
-  return <div data-theme={props.theme} className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96 indicator">
-    <Indicator isOnline />
-    <div className="w-full flex flex-col justify-center items-center ">
-      <div className="min-w-16 min-h-16 border rounded-full flex items-center justify-center border-gray-200 shadow-xl bg-white flex-shrink-0 text-3xl">{props.emoji}</div>
-      <p className="text-gray-900 text-2xl mt-2">{props.name}</p>
+  console.log(props.theme)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  console.log(settingsOpen)
+  console.log(props.status)
+
+  return (
+    <div data-theme={props.theme} className="shadow-2xl bg-gray-200 p-2 flex flex-col w-96 min-w-96">
+      <HouseSettings settingsOpen={settingsOpen} setSettingsOpen={setSettingsOpen} />
+      <div className="w-full flex flex-col justify-center items-center ">
+        <div className="min-w-16 min-h-16 border rounded-full flex items-center justify-center border-gray-200 shadow-xl bg-white flex-shrink-0 text-3xl indicator">
+          <Indicator status={props.status} />
+          {props.emoji}
+        </div>
+        <p className="text-gray-900 text-2xl mt-2">{props.name}</p>
+      </div>
+      <div className="mb-4" />
+
+      {settingsOpen && (
+        <ThemeSelector home={props} />
+      )}
+
+      {!settingsOpen && (
+        <div className="w-full flex flex-col">
+          {props.children}
+        </div>
+      )}
     </div>
-    <div className="mb-4" />
-    <div className="w-full flex flex-col">
-      {props.children}
-    </div>
-  </div>
+  )
 }
 
 
@@ -71,21 +106,11 @@ function ThemeSelector(props: { home: Home }) {
   const setHomeTheme = useStore(state => state.setHomeTheme)
   const [theme, setTheme] = useState<Theme>(props.home.theme)
   return (
-    <div className="join">
-      <select
-        className="select select-bordered w-full max-w-xs join-item"
-        value={theme}
-        onChange={(e) => setTheme(e.target.value as Theme)}
-      >
-        {themes.map(t => <option key={t} value={t}>{t}</option>)}
-      </select>
-      <button
-        className="btn btn-primary join-item"
-        onClick={() => setHomeTheme(theme, props.home.name)}
-      >
-        Set Theme
-      </button>
-    </div>
+    <>
+      <div className="join join-vertical">
+        {themes.map(t => <input key={t} type="radio" name="theme-buttons" className="btn join-item" aria-label={t} value={t} onChange={() => setHomeTheme(t, props.home.name)} />)}
+      </div>
+    </>
   );
 }
 
@@ -107,14 +132,15 @@ export default function Index() {
       <div className="flex w-full">
         {allHomes(store).map(h => (
           <>
-            <House theme={h.theme} key={h.name} name={h.name} cells={h.cells} emoji={h.emoji}>
+            <House status={h.status} theme={h.theme} key={h.name} name={h.name} cells={h.cells} emoji={h.emoji}>
               {h.cells.map(c => <CellComponent key={c.id} cell={c} />)}
               <CellSelector addCell={(cell) => store.addCell(cell, h.name)} />
             </House>
             <div className="mr-8" />
           </>
-        ))}
-      </div>
-    </div>
+        ))
+        }
+      </div >
+    </div >
   );
 }
