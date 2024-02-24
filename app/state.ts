@@ -52,6 +52,13 @@ function createCell(cell: CellType, num: number): Cell {
         type: 'val',
         value: ''
       }
+    case 'map': {
+      return {
+        id: num,
+        type: 'map',
+        value: ''
+      }
+    }
     default:
       return {
         id: num,
@@ -105,7 +112,7 @@ export const useStore = create<GlobalState & { setHomeTheme: (theme: Theme, home
   }
 }))
 
-export type CellType = 'text' | 'code' | 'color' | 'draw' | 'val'
+export type CellType = 'text' | 'code' | 'color' | 'draw' | 'val' | 'map'
 
 export interface Cell {
   id: number; // integer
